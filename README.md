@@ -187,7 +187,7 @@ Inheritance is used mainly through PyQt6. `AirSenseWindow` and `RecordsWindow` b
 
 ### Polymorphism
 
-The project mainly demonstrates polymorphism through PyQt6 inheritance. The custom window classes inherit methods and behavior from `QMainWindow` while implementing their own application-specific functions and interface behavior.
+The project mainly demonstrates polymorphism through PyQt6's inherited GUI behavior. The custom window classes inherit functionality from `QMainWindow` while providing their own application-specific implementations.
 
 ---
 
@@ -235,22 +235,22 @@ The system performs the following main operations:
 
 The system was tested by performing the major operations available in AIRSENSE.
 
-| Test Case                         | Result                                                     | 
-| --------------------------------- | ---------------------------------------------------------- | 
-| Add a valid record                | The system retrieves PM2.5 data and saves a new record.    | 
-| View records                      | Saved records are displayed in the table.                  | 
-| Search by location                | Matching records are displayed.                            | 
-| Search by category                | Records with the matching category are displayed.          | 
-| Search with empty input           | The system displays a warning message.                     | 
-| Update PM2.5                      | A new PM2.5 value is retrieved and the record is updated.  | 
-| Change location                   | The selected record's location is updated.                 | 
-| Update without selecting a record | The system displays a warning.                             | 
-| Delete a record                   | The selected record is removed from SQLite.                | 
-| Cancel deletion                   | The record remains in the database.                        | 
-| Delete without selecting a record | The system displays a warning.                             | 
-| Invalid campus location           | The system rejects the invalid location.                   | 
-| Database initialization           | The required SQLite table is created if it does not exist. | 
-| API error                         | The system displays an error instead of silently failing.  | 
+| Test Case                         | Expected Result                                            | Actual Result             |
+| --------------------------------- | ---------------------------------------------------------- | ------------------------- |
+| Add a valid record                | The system retrieves PM2.5 data and saves a new record.    | Passed                    |
+| View records                      | Saved records are displayed in the table.                  | Passed                    |
+| Search by location                | Matching records are displayed.                            | Passed                    |
+| Search by category                | Records with the matching category are displayed.          | Passed                    |
+| Search with empty input           | The system displays a warning message.                     | Passed                    |
+| Update PM2.5                      | A new PM2.5 value is retrieved and the record is updated.  | Passed                    |
+| Change location                   | The selected record's location is updated.                 | Passed                    |
+| Update without selecting a record | The system displays a warning.                             | Passed                    |
+| Delete a record                   | The selected record is removed from SQLite.                | Passed                    |
+| Cancel deletion                   | The record remains in the database.                        | Passed                    |
+| Delete without selecting a record | The system displays a warning.                             | Passed                    |
+| Invalid campus location           | The system rejects the invalid location.                   | Passed                    |
+| Database initialization           | The required SQLite table is created if it does not exist. | Passed                    |
+| API error                         | The system displays an error instead of silently failing.  | Passed                    |
 
 ---
 
