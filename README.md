@@ -111,7 +111,7 @@ Before running AIRSENSE, install:
 Clone the GitHub repository:
 
 ```bash
-git clone <GITHUB_REPOSITORY_LINK>
+git clone <https://github.com/chemrewcane/AIRSENSE_PM25_Monitoring_System>
 ```
 
 Then enter the project directory:
@@ -153,277 +153,108 @@ No manual database creation is required.
 
 ---
 
-# 8. How to Use the System
+## How to Use the System
 
-## Adding a Record
-
-1. Open AIRSENSE.
-2. Select a campus location from the dropdown menu.
-3. Click **Add Record**.
-4. The system requests the current PM2.5 value from the Open-Meteo API.
-5. The system classifies the PM2.5 value.
-6. The record is saved to SQLite.
-7. A success message displays the saved information.
-
-## Viewing Records
-
-1. Click **View Record**.
-2. The record-management window opens.
-3. Saved records are displayed in the table.
-
-## Searching Records
-
-1. Enter a keyword in the Search field.
-2. The keyword may refer to a location or PM2.5 category.
-3. Click **Search**.
-4. Matching records are displayed.
-
-The **Clear** button can be used to clear the search input.
-
-## Updating a Record
-
-1. Select a record from the table.
-2. Click **Update Record**.
-3. Choose either:
-
-   * Refresh PM2.5 reading
-   * Change location
-4. Complete the selected operation.
-
-## Deleting a Record
-
-1. Select a record from the table.
-2. Click **Delete Record**.
-3. Review the confirmation message.
-4. Confirm the deletion.
-5. The selected record is removed from the database.
-
-## Showing All Records
-
-Click **Show All** to reload and display all saved records.
+1. Open the application by running `main.py`.
+2. Select a campus location from the **Select Location** dropdown.
+3. Click **Add Record** to retrieve the current PM2.5 reading and save it to the database.
+4. Select **View Record** to open the air-quality records window.
+5. Use the **Search** field to find records by location or PM2.5 category.
+6. Select a record and use **Update Record** to refresh its PM2.5 reading or change its location.
+7. Use **Delete Record** to permanently remove a selected record.
+8. Use **Show All** to display all saved air-quality records.
+9. Use **Clear** to clear the search input.
+10. Close the application when finished.
 
 ---
 
-# 9. OOP Implementation
+## OOP Implementation
 
-AIRSENSE uses object-oriented programming through PyQt6 window classes.
+AIRSENSE uses classes to organize the graphical interface.
 
-## Important Classes
+Important classes:
 
-### `AirSenseWindow`
+- `AirSenseWindow` – Represents the main AIRSENSE window and handles location selection, adding records, and opening the record-management window.
+- `RecordsWindow` – Represents the record-management window and handles viewing, searching, updating, and deleting air-quality records.
 
-Located in:
+### Encapsulation
 
-```text
-gui/main_window.py
-```
+Encapsulation is applied by grouping related data and behavior into classes and separating the responsibilities of different modules. For example, `AirSenseWindow` handles the main GUI operations, while `RecordsWindow` handles record-management operations. Database and API operations are also separated into their respective modules.
 
-```python
-class AirSenseWindow(QMainWindow):
-```
+### Inheritance
 
-This class represents the main AIRSENSE window.
+Inheritance is used mainly through PyQt6. `AirSenseWindow` and `RecordsWindow` both inherit from `QMainWindow`, allowing them to use the built-in functionality provided by PyQt6 while adding AIRSENSE-specific behavior.
 
-It contains methods for:
+### Polymorphism
 
-* Building the interface.
-* Applying styles.
-* Adding records.
-* Opening the records window.
-
-### `RecordsWindow`
-
-Located in:
-
-```text
-gui/records_window.py
-```
-
-```python
-class RecordsWindow(QMainWindow):
-```
-
-This class represents the record-management window.
-
-It contains methods for:
-
-* Displaying records.
-* Searching.
-* Selecting records.
-* Updating records.
-* Deleting records.
-
-## Inheritance
-
-Inheritance is applied when the project creates custom window classes from the PyQt6 `QMainWindow` class:
-
-```python
-class AirSenseWindow(QMainWindow):
-```
-
-and:
-
-```python
-class RecordsWindow(QMainWindow):
-```
-
-The custom classes inherit the existing functionality provided by `QMainWindow` and extend it with AIRSENSE-specific behavior.
-
-## Encapsulation
-
-Encapsulation is applied by grouping related data and behavior inside classes and modules.
-
-For example, `AirSenseWindow` contains the GUI-related behavior of the main window, while `RecordsWindow` contains the behavior for managing records.
-
-The project also separates responsibilities into different modules, such as the API module, database module, feature module, and GUI modules.
-
-## Polymorphism
-
-No significant custom polymorphism implementation is used in AIRSENSE.
-
-The project primarily demonstrates **classes, objects, and inheritance through PyQt6** rather than implementing a custom polymorphic class hierarchy.
+The project mainly demonstrates polymorphism through PyQt6 inheritance. The custom window classes inherit methods and behavior from `QMainWindow` while implementing their own application-specific functions and interface behavior.
 
 ---
 
-# 10. Database
+## Database
 
-AIRSENSE uses **SQLite** as its local database.
+AIRSENSE uses a SQLite database named `airsense.db`.
 
-The database file is:
+### air_quality_records Table
 
-```text
-airsense.db
-```
+The `air_quality_records` table stores:
 
-The application creates the required table automatically when it starts.
+- `id` – Unique record ID generated automatically by the database.
+- `location` – Selected location within the University of Mindanao – Matina Campus.
+- `pm25` – Retrieved PM2.5 air-quality reading.
+- `category` – PM2.5 classification such as Good, Moderate, or Unhealthy.
+- `advisory` – Health advisory associated with the PM2.5 category.
+- `timestamp` – Date and time when the record was logged.
 
-## Database Table
+### Database Operations
 
-The main table is:
+The system performs the following main operations:
 
-```text
-air_quality_records
-```
-
-### Table Structure
-
-| Column      | Type    | Description                          |
-| ----------- | ------- | ------------------------------------ |
-| `id`        | INTEGER | Primary key with automatic numbering |
-| `location`  | TEXT    | Selected campus location             |
-| `pm25`      | REAL    | PM2.5 reading                        |
-| `category`  | TEXT    | PM2.5 classification                 |
-| `advisory`  | TEXT    | Air-quality advisory                 |
-| `timestamp` | TEXT    | Date and time the record was logged  |
-
-## Database Operations
-
-### Create
-
-A new record is inserted using an SQL `INSERT` operation.
-
-```sql
-INSERT INTO air_quality_records
-```
-
-### Read
-
-Records are retrieved using SQL `SELECT` operations.
-
-The system can retrieve:
-
-* All records.
-* One record by ID.
-
-### Update
-
-The system uses SQL `UPDATE` operations to:
-
-* Refresh PM2.5 information.
-* Update the category and advisory.
-* Update the timestamp.
-* Change the selected location.
-
-### Delete
-
-The system uses SQL `DELETE` to remove a selected record.
-
-### Search
-
-The system searches the database using the location or category fields with SQL `LIKE`.
-
+- **Create** – Add new PM2.5 air-quality records.
+- **Read** – Retrieve all records or find a specific record by its ID.
+- **Update** – Refresh the PM2.5 reading or change the location of a record.
+- **Delete** – Delete a selected air-quality record.
+- **Search** – Search records by location or PM2.5 category.
+  
 ---
 
-# 11. Screenshots
+## Screenshots
 
-The following screenshots should be added to this section before final submission.
+### Main Window
+<img width="692" height="376" alt="image" src="https://github.com/user-attachments/assets/7dc2cf78-9a29-4f8a-84ac-abd595843db7" />
 
-## Main Window
+- Shows the main AIRSENSE interface where the user can select a campus location and add a new PM2.5 record.
 
-**Description:** Shows the main AIRSENSE interface where the user can select a campus location and add a new PM2.5 record.
+### Record Management Window
+<img width="1091" height="670" alt="image" src="https://github.com/user-attachments/assets/982efd4b-f9ef-4100-b2cc-d81f79ec6167" />
 
-```text
-[Insert Main Window Screenshot Here]
-```
-
-## Record Management Window
-
-**Description:** Shows the table containing saved PM2.5 air-quality records.
-
-```text
-[Insert Records Window Screenshot Here]
-```
-
-## Search Feature
-
-**Description:** Shows the search field and the resulting records after searching by location or PM2.5 category.
-
-```text
-[Insert Search Screenshot Here]
-```
-
-## Update Feature
-
-**Description:** Shows the update options for refreshing the PM2.5 reading or changing the record location.
-
-```text
-[Insert Update Screenshot Here]
-```
-
-## Delete Feature
-
-**Description:** Shows the confirmation dialog displayed before deleting a selected air-quality record.
-
-```text
-[Insert Delete Confirmation Screenshot Here]
-```
-
+- Shows the table containing saved PM2.5 air-quality records.
 ---
 
-# 12. Testing
+## Testing
 
 The system was tested by performing the major operations available in AIRSENSE.
 
-| Test Case                         | Expected Result                                            | Actual Result |
-| --------------------------------- | ---------------------------------------------------------- | ------------- |
-| Add a valid record                | The system retrieves PM2.5 data and saves a new record.    | Passed        |
-| View records                      | Saved records are displayed in the table.                  | Passed        |
-| Search by location                | Matching records are displayed.                            | Passed        |
-| Search by category                | Records with the matching category are displayed.          | Passed        |
-| Search with empty input           | The system displays a warning message.                     | Passed        |
-| Update PM2.5                      | A new PM2.5 value is retrieved and the record is updated.  | Passed        |
-| Change location                   | The selected record's location is updated.                 | Passed        |
-| Update without selecting a record | The system displays a warning.                             | Passed        |
-| Delete a record                   | The selected record is removed from SQLite.                | Passed        |
-| Cancel deletion                   | The record remains in the database.                        | Passed        |
-| Delete without selecting a record | The system displays a warning.                             | Passed        |
-| Invalid campus location           | The system rejects the invalid location.                   | Passed        |
-| Database initialization           | The required SQLite table is created if it does not exist. | Passed        |
-| API error                         | The system displays an error instead of silently failing.  | Passed        |
+| Test Case                         | Result                                                     | 
+| --------------------------------- | ---------------------------------------------------------- | 
+| Add a valid record                | The system retrieves PM2.5 data and saves a new record.    | 
+| View records                      | Saved records are displayed in the table.                  | 
+| Search by location                | Matching records are displayed.                            | 
+| Search by category                | Records with the matching category are displayed.          | 
+| Search with empty input           | The system displays a warning message.                     | 
+| Update PM2.5                      | A new PM2.5 value is retrieved and the record is updated.  | 
+| Change location                   | The selected record's location is updated.                 | 
+| Update without selecting a record | The system displays a warning.                             | 
+| Delete a record                   | The selected record is removed from SQLite.                | 
+| Cancel deletion                   | The record remains in the database.                        | 
+| Delete without selecting a record | The system displays a warning.                             | 
+| Invalid campus location           | The system rejects the invalid location.                   | 
+| Database initialization           | The required SQLite table is created if it does not exist. | 
+| API error                         | The system displays an error instead of silently failing.  | 
 
 ---
 
-# 13. Known Issues / Limitations
+## Known Issues / Limitations
 
 1. **API Dependency**
    Adding or refreshing a PM2.5 record requires an internet connection because the system retrieves data from the Open-Meteo Air Quality API.
@@ -434,40 +265,23 @@ The system was tested by performing the major operations available in AIRSENSE.
 3. **No Physical Sensors**
    AIRSENSE does not directly measure PM2.5 using hardware sensors.
 
-4. **No Separate AQI Calculation**
-   The system classifies the retrieved PM2.5 concentration using predefined PM2.5 ranges. It does not calculate or display a separate Air Quality Index (AQI).
-
-5. **Desktop Application**
-   AIRSENSE is currently designed as a desktop Python application using PyQt6.
-
-6. **Local Database**
+4. **Local Database**
    The SQLite database is stored locally on the computer running the application. Records are not automatically synchronized between different computers.
 
-7. **API Availability**
+5. **API Availability**
    If the external Open-Meteo service is unavailable or does not return a PM2.5 value, the system cannot retrieve a new reading.
 
 ---
 
-# 14. Author
+## Author
 
-**Name:** [Your Full Name]
+**Name:** Wrench Maxenne Callao Singcol
 
-**Section:** [Your Section]
 
-**Course:** Bachelor of Science in Computer Science
-
-**University:** University of Mindanao – Matina Campus
+**Section:** 3581
 
 ---
 
-# 15. GitHub Repository
+## GitHub Repository
 
-**GitHub Repository:** [Insert GitHub Repository Link Here]
-
----
-
-# Conclusion
-
-AIRSENSE demonstrates the integration of **Python programming, modular programming, API integration, PyQt6 GUI development, SQLite database management, CRUD operations, search functionality, error handling, and object-oriented programming** into a single desktop application.
-
-The system provides a structured way to retrieve, classify, store, and manage PM2.5 air-quality records for selected locations associated with the University of Mindanao – Matina Campus.
+https://github.com/chemrewcane/AIRSENSE_PM25_Monitoring_System
