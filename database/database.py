@@ -1,7 +1,6 @@
 import sqlite3
 from pathlib import Path
 
-
 DATABASE_FILE = Path(__file__).resolve().parent.parent / "airsense.db"
 
 CREATE_TABLE_SQL = """
