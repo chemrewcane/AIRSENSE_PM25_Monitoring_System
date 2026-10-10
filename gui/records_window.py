@@ -1,7 +1,10 @@
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
+    QComboBox,
+    QHBoxLayout,
     QLabel,
+    QLineEdit,
+    QPushButton,
     QMainWindow,
 )
 
@@ -20,7 +23,6 @@ from gui.dialogs import (
 from gui.record_helpers import display_records
 
 from gui.ui_components import (
-    apply_records_window_style,
     create_action_section,
     create_central_widget,
     create_records_table,
@@ -28,14 +30,12 @@ from gui.ui_components import (
 )
 
 class RecordsWindow(QMainWindow):
-
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle(
             "AIRSENSE - Air Quality Records"
         )
-
         self.resize(1100, 650)
 
         screen = QApplication.primaryScreen().availableGeometry()
@@ -43,59 +43,134 @@ class RecordsWindow(QMainWindow):
         window.moveCenter(screen.center())
         self.move(window.topLeft())
 
-        apply_records_window_style(self)
-
+        self.apply_styles()
         self.build_interface()
-
         self.refresh_table()
 
+    def apply_styles(self):
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #F7F9FB;
+            }
+
+            QLabel {
+                color: #111111;
+            }
+
+            QLineEdit {
+                background-color: white;
+                border: 1px solid #B8C9D6;
+                border-radius: 5px;
+                padding: 6px;
+            }
+
+            QLineEdit:focus {
+                border: 2px solid #2E8EB5;
+            }
+
+            QPushButton {
+                background-color: #2E8EB5;
+                color: black;
+                border: none;
+                border-radius: 5px;
+                padding: 8px 14px;
+                font-weight: bold;
+            }
+
+            QPushButton:hover {
+                background-color: #25799B;
+                color: white;
+            }
+
+            QPushButton:pressed {
+                background-color: #1F6683;
+                color: white;
+            }
+
+            QTableWidget {
+                background-color: white;
+                border: 1px solid #C8D6DF;
+                gridline-color: #D9E2E8;
+                selection-background-color: #B9DDF0;
+                selection-color: #17324D;
+                border-radius: 5px;
+            }
+
+            QHeaderView::section {
+                background-color: #2E8EB5;
+                color: black;
+                padding: 7px;
+                border: none;
+                font-weight: bold;
+            }
+        """)
+
     def build_interface(self):
-        central_widget, main_layout = (
-            create_central_widget()
-        )
+        from PyQt6.QtCore import Qt
 
-        self.setCentralWidget(
-            central_widget
-        )
+        central_widget, main_layout = create_central_widget()
+        self.setCentralWidget(central_widget)
 
-        self._build_title(
-            main_layout
-        )
-
-        self._build_search_controls(
-            main_layout
-        )
-
-        self._build_table(
-            main_layout
-        )
-
-        self._build_action_controls(
-            main_layout
-        )
-
-    def _build_title(self, main_layout):
         title = QLabel(
             "AIRSENSE\n"
             "PM2.5 AIR POLLUTION MONITORING & ANALYSIS SYSTEM"
         )
-
-        title.setAlignment(
-            Qt.AlignmentFlag.AlignCenter
-        )
-
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title.setStyleSheet("""
             background-color: #2E8EB5;
-            color: white;
+            color: black;
             border-radius: 8px;
             font-size: 22px;
             font-weight: bold;
             padding: 12px;
         """)
+        main_layout.addWidget(title)
 
-        main_layout.addWidget(
-            title
-        )
+        add_layout = QHBoxLayout()
+        add_layout.addWidget(QLabel("Select Location:"))
+        self.location_combo = QComboBox()
+        self.location_combo.addItems(CAMPUS_LOCATIONS)
+        add_layout.addWidget(self.location_combo)
+        self.add_button = QPushButton("Add Record")
+        self.add_button.clicked.connect(self.add_record)
+        add_layout.addWidget(self.add_button)
+        main_layout.addLayout(add_layout)
+
+        search_layout = QHBoxLayout()
+        search_layout.addWidget(QLabel("Search by Location:"))
+        self.search_input = QLineEdit()
+        self.search_input.setPlaceholderText("Enter a campus location...")
+        self.search_button = QPushButton("Search")
+        self.clear_button = QPushButton("Clear")
+        self.search_button.clicked.connect(self.search_records)
+        self.clear_button.clicked.connect(self.clear_search)
+        self.search_input.returnPressed.connect(self.search_records)
+        search_layout.addWidget(self.search_input)
+        search_layout.addWidget(self.search_button)
+        search_layout.addWidget(self.clear_button)
+        main_layout.addLayout(search_layout)
+
+        category_layout = QHBoxLayout()
+        category_layout.addWidget(QLabel("Filter by Category:"))
+        self.category_combo = QComboBox()
+        self.category_combo.addItems([
+            "All Categories",
+            "Good",
+            "Moderate",
+            "Unhealthy for Sensitive People",
+            "Unhealthy",
+            "Very Unhealthy",
+            "Hazardous",
+        ])
+        self.category_combo.currentTextChanged.connect(self.apply_filters)
+        category_layout.addWidget(self.category_combo)
+        category_layout.addStretch()
+        main_layout.addLayout(category_layout)
+
+        self.table = create_records_table()
+        main_layout.addWidget(self.table)
+
+        self._build_action_controls(main_layout)
 
     def _build_search_controls(self, main_layout):
         (
@@ -105,28 +180,10 @@ class RecordsWindow(QMainWindow):
             self.clear_button,
         ) = create_search_section()
 
-        self.search_button.clicked.connect(
-            self.search_records
-        )
-
-        self.clear_button.clicked.connect(
-            self.clear_search
-        )
-
-        self.search_input.returnPressed.connect(
-            self.search_records
-        )
-
-        main_layout.addLayout(
-            layout
-        )
-
-    def _build_table(self, main_layout):
-        self.table = create_records_table()
-
-        main_layout.addWidget(
-            self.table
-        )
+        self.search_button.clicked.connect(self.search_records)
+        self.clear_button.clicked.connect(self.clear_search)
+        self.search_input.returnPressed.connect(self.search_records)
+        main_layout.addLayout(layout)
 
     def _build_action_controls(self, main_layout):
         (
@@ -145,54 +202,62 @@ class RecordsWindow(QMainWindow):
         )
 
         self.show_all_button.clicked.connect(
-            self.refresh_table
+            self.show_all_records
         )
 
-        main_layout.addLayout(
-            layout
-        )
+        main_layout.addLayout(layout)
+
+    def show_all_records(self):
+        self.search_input.clear()
+        self.category_combo.setCurrentIndex(0)
+        self.refresh_table()
+
+    def add_record(self):
+        location = self.location_combo.currentText()
+        try:
+            record = airsense.add_record(location)
+            show_success(
+                self,
+                "Success",
+                (
+                    "Air quality record added successfully.\n\n"
+                    f"Location: {record['location']}\n"
+                    f"PM2.5: {record['pm25']} ug/m3\n"
+                    f"Category: {record['category']}"
+                ),
+            )
+            self.apply_filters()
+        except Exception as error:
+            show_error(self, "Error", f"Could not add record:\n\n{error}")
 
     def refresh_table(self):
-        records = airsense.get_records()
+        self.apply_filters()
 
-        display_records(
-            self.table,
-            records,
-        )
+    def apply_filters(self, *_args):
+        keyword = self.search_input.text().strip()
+        category = self.category_combo.currentText()
+
+        if keyword:
+            records = airsense.search_records(keyword)
+        else:
+            records = airsense.get_records()
+
+        if category != "All Categories":
+            records = [record for record in records if record["category"] == category]
+
+        display_records(self.table, records)
+        self.table.resizeColumnsToContents()
 
     def clear_search(self):
         self.search_input.clear()
+        self.apply_filters()
 
     def search_records(self):
-        keyword = (
-            self.search_input
-            .text()
-            .strip()
-        )
-
+        keyword = self.search_input.text().strip()
         if not keyword:
-            show_warning(
-                self,
-                "Search",
-                "Please enter a search keyword.",
-            )
+            show_warning(self, "Search", "Please enter a campus location.")
             return
-
-        results = airsense.search_records(
-            keyword
-        )
-
-        display_records(
-            self.table,
-            results,
-        )
-
-        if not results:
-            show_info(
-                self,
-                "Search Results",
-                f"No records matched '{keyword}'.",
-            )
+        self.apply_filters()
 
     def get_selected_record(self):
         selected_rows = (
@@ -210,23 +275,16 @@ class RecordsWindow(QMainWindow):
             return None
 
         row = selected_rows[0].row()
-
-        record_id_item = (
-            self.table.item(
-                row,
-                0,
-            )
-        )
+        record_id_item = self.table.item(row, 0)
 
         if record_id_item is None:
             return None
 
         try:
-            record_id = record_id_item.data(
-                Qt.ItemDataRole.UserRole
+            record_id = int(
+                record_id_item.text()
             )
-
-        except Exception:
+        except ValueError:
             show_error(
                 self,
                 "Error",
@@ -234,10 +292,8 @@ class RecordsWindow(QMainWindow):
             )
             return None
 
-        record = (
-            airsense.database.get_record(
-                record_id
-            )
+        record = airsense.database.get_record(
+            record_id
         )
 
         if record is None:
@@ -246,12 +302,11 @@ class RecordsWindow(QMainWindow):
                 "Error",
                 "The selected record could not be found.",
             )
+
         return record
 
     def update_record(self):
-        target = (
-            self.get_selected_record()
-        )
+        target = self.get_selected_record()
 
         if target is None:
             return
@@ -272,34 +327,24 @@ class RecordsWindow(QMainWindow):
             return
 
         if choice == "Refresh PM2.5 reading":
-            self._refresh_pm25(
-                target
-            )
-
+            self._refresh_pm25(target)
         else:
-            self._change_location(
-                target
-            )
+            self._change_location(target)
 
     def _refresh_pm25(self, target):
         try:
-            updated_record = (
-                airsense.update_record(
-                    target["id"],
-                    "refresh",
-                )
+            updated_record = airsense.update_record(
+                target["id"],
+                "refresh",
             )
 
             show_success(
                 self,
                 "Success",
                 (
-                    "PM2.5 reading updated "
-                    "successfully.\n\n"
-                    f"New PM2.5: "
-                    f"{updated_record['pm25']} ug/m3\n"
-                    f"Category: "
-                    f"{updated_record['category']}"
+                    "PM2.5 reading updated successfully.\n\n"
+                    f"New PM2.5: {updated_record['pm25']} ug/m3\n"
+                    f"Category: {updated_record['category']}"
                 ),
             )
 
@@ -309,10 +354,7 @@ class RecordsWindow(QMainWindow):
             show_error(
                 self,
                 "Error",
-                (
-                    "Could not refresh the "
-                    f"PM2.5 reading:\n\n{error}"
-                ),
+                f"Could not refresh the PM2.5 reading:\n\n{error}",
             )
 
     def _change_location(self, target):
@@ -345,16 +387,11 @@ class RecordsWindow(QMainWindow):
             show_error(
                 self,
                 "Error",
-                (
-                    "Could not update location:"
-                    f"\n\n{error}"
-                ),
+                f"Could not update location:\n\n{error}",
             )
 
     def delete_record(self):
-        target = (
-            self.get_selected_record()
-        )
+        target = self.get_selected_record()
 
         if target is None:
             return
@@ -363,8 +400,7 @@ class RecordsWindow(QMainWindow):
             self,
             "Delete Record",
             (
-                "Are you sure you want to "
-                "delete this record?\n\n"
+                "Are you sure you want to delete this record?\n\n"
                 f"ID: {target['id']}\n"
                 f"Location: {target['location']}\n"
                 f"PM2.5: {target['pm25']} ug/m3"
