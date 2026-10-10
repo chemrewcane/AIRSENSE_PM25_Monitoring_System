@@ -1,3 +1,4 @@
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
     QComboBox,
@@ -6,6 +7,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QMainWindow,
+    QHeaderView
 )
 
 from config.config_module import CAMPUS_LOCATIONS
@@ -258,8 +260,13 @@ class RecordsWindow(QMainWindow):
         if category != "All Categories":
             records = [record for record in records if record["category"] == category]
 
+        
         display_records(self.table, records)
-        self.table.resizeColumnsToContents()
+
+        self.table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
+        self.table.horizontalHeader().setStretchLastSection(True)
 
     def clear_search(self):
         self.search_input.clear()
@@ -273,13 +280,9 @@ class RecordsWindow(QMainWindow):
         self.apply_filters()
 
     def get_selected_record(self):
-        selected_rows = (
-            self.table
-            .selectionModel()
-            .selectedRows()
-        )
+        row = self.table.currentRow()
 
-        if not selected_rows:
+        if row < 0:
             show_warning(
                 self,
                 "No Record Selected",
@@ -287,17 +290,9 @@ class RecordsWindow(QMainWindow):
             )
             return None
 
-        row = selected_rows[0].row()
         record_id_item = self.table.item(row, 0)
 
         if record_id_item is None:
-            return None
-
-        try:
-            record_id = int(
-                record_id_item.text()
-            )
-        except ValueError:
             show_error(
                 self,
                 "Error",
@@ -305,9 +300,22 @@ class RecordsWindow(QMainWindow):
             )
             return None
 
-        record = airsense.database.get_record(
-            record_id
+        record_id = record_id_item.data(
+            Qt.ItemDataRole.UserRole
         )
+
+        if record_id is None:
+            try:
+                record_id = int(record_id_item.text())
+            except (ValueError, TypeError):
+                show_error(
+                    self,
+                    "Error",
+                    "The selected record has an invalid ID.",
+                )
+                return None
+
+        record = airsense.database.get_record(int(record_id))
 
         if record is None:
             show_warning(
@@ -315,6 +323,7 @@ class RecordsWindow(QMainWindow):
                 "Error",
                 "The selected record could not be found.",
             )
+            return None
 
         return record
 
