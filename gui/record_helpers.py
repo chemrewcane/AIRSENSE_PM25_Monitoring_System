@@ -26,6 +26,6 @@ def color_record_row(table, row, category):
 def display_records(table, records):
     clear_table(table)
     for index, record in enumerate(records, start=1):
-        add_record_to_table(table, record, display_id=index)
+        add_record_to_table(table, record)
         row = table.rowCount() - 1
         color_record_row(table, row, record["category"])
