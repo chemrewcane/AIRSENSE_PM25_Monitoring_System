@@ -226,7 +226,7 @@ The system performs the following main operations:
 - Shows the main AIRSENSE interface where the user can select a campus location and add a new PM2.5 record.
 
 ### Record Management Window
-<img width="1091" height="670" alt="image" src="https://github.com/user-attachments/assets/982efd4b-f9ef-4100-b2cc-d81f79ec6167" />
+<img width="1088" height="672" alt="image" src="https://github.com/user-attachments/assets/7ea71f08-0f85-4b32-865b-cdbae1443d42" />
 
 - Shows the table containing saved PM2.5 air-quality records.
 ---
