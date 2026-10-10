@@ -9,7 +9,8 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem,
     QVBoxLayout,
     QWidget,
-    QHeaderView
+    QHeaderView,
+    QSizePolicy
 )
 
 def create_title():
@@ -53,9 +54,9 @@ def create_search_section():
 
     return layout, search_input, search_button, show_all_button
 
-
 def create_records_table():
     table = QTableWidget()
+    table.verticalHeader().setVisible(False)
 
     table.setColumnCount(6)
     table.setHorizontalHeaderLabels([
@@ -79,13 +80,15 @@ def create_records_table():
 
     table.setMinimumWidth(0)
     table.setSizePolicy(
-        table.sizePolicy().Policy.Expanding,
-        table.sizePolicy().Policy.Expanding,
+        QSizePolicy.Policy.Expanding,
+        QSizePolicy.Policy.Expanding,
     )
 
-    table.horizontalHeader().setSectionResizeMode(
+    header = table.horizontalHeader()
+    header.setSectionResizeMode(
         QHeaderView.ResizeMode.Stretch
     )
+    header.setStretchLastSection(True)
 
     return table
 
@@ -113,10 +116,6 @@ def create_central_widget():
     return widget, layout
 
 def add_record_to_table(table, record, display_id=None):
-    """
-    If display_id is supplied, show that number in the table instead of the
-    database ID; the original database ID remains in the record itself.
-    """
     row = table.rowCount()
     table.insertRow(row)
 
@@ -129,12 +128,22 @@ def add_record_to_table(table, record, display_id=None):
         record["timestamp"],
     ]
 
+    
     for column, value in enumerate(values):
-        table.setItem(
-            row,
-            column,
-            QTableWidgetItem(str(value)),
+        item = QTableWidgetItem(str(value))
+
+        item.setTextAlignment(
+            Qt.AlignmentFlag.AlignCenter
+            | Qt.AlignmentFlag.AlignVCenter
         )
+
+        if column == 0:
+            item.setData(
+                Qt.ItemDataRole.UserRole,
+                record["id"],
+            )
+
+        table.setItem(row, column, item)
 
 def clear_table(table):
     table.setRowCount(0)
