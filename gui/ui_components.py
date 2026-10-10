@@ -90,6 +90,31 @@ def create_records_table():
     )
     header.setStretchLastSection(True)
 
+    table.setStyleSheet("""
+        QTableWidget {
+            border: 1px solid #B7D9E8;
+            border-radius: 8px;
+            background-color: white;
+            gridline-color: #D9E5EB;
+            selection-background-color: #DCEEF7;
+            selection-color: #222222;
+        }
+
+        QHeaderView::section {
+            background-color: #2F91B5;
+            color: white;
+            font-weight: bold;
+            padding: 8px;
+            border: none;
+        }
+
+        QTableCornerButton::section {
+            background-color: #2F91B5;
+            border: none;
+            border-top-left-radius: 8px;
+        }
+    """)
+
     return table
 
 def create_action_section():
