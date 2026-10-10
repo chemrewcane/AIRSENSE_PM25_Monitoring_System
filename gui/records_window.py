@@ -132,9 +132,9 @@ class RecordsWindow(QMainWindow):
         add_layout = QHBoxLayout()
 
         location_label = QLabel("Select Location:")
-        location_label.setMinimumWidth(100)
+        location_label.setFixedWidth(100)
         add_layout.addWidget(location_label)
-
+        
         self.location_combo = QComboBox()
         self.location_combo.addItems(CAMPUS_LOCATIONS)
 
@@ -155,7 +155,11 @@ class RecordsWindow(QMainWindow):
         main_layout.addLayout(add_layout)
 
         search_layout = QHBoxLayout()
-        search_layout.addWidget(QLabel("Search by Location:"))
+        
+        search_label = QLabel("Search Location:")
+        search_label.setFixedWidth(100)
+        search_layout.addWidget(search_label)
+        
         self.search_input = QLineEdit()
         self.search_input.setPlaceholderText("Enter a campus location...")
         self.search_button = QPushButton("Search")
@@ -169,7 +173,10 @@ class RecordsWindow(QMainWindow):
         main_layout.addLayout(search_layout)
 
         category_layout = QHBoxLayout()
-        category_layout.addWidget(QLabel("Filter by Category:"))
+        category_label = QLabel("Filter by Category:")
+        category_label.setFixedWidth(100)
+        category_layout.addWidget(category_label)
+                
         self.category_combo = QComboBox()
         self.category_combo.addItems([
             "All Categories",
