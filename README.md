@@ -240,22 +240,24 @@ The system performs the following main operations:
 
 The system was tested by performing the major operations available in AIRSENSE.
 
-| Test Case                         | Expected Result                                            | Actual Result             |
-| --------------------------------- | ---------------------------------------------------------- | ------------------------- |
-| Add a valid record                | The system retrieves PM2.5 data and saves a new record.    | Passed                    |
-| View records                      | Saved records are displayed in the table.                  | Passed                    |
-| Search by location                | Matching records are displayed.                            | Passed                    |
-| Search by category                | Records with the matching category are displayed.          | Passed                    |
-| Search with empty input           | The system displays a warning message.                     | Passed                    |
-| Update PM2.5                      | A new PM2.5 value is retrieved and the record is updated.  | Passed                    |
-| Change location                   | The selected record's location is updated.                 | Passed                    |
-| Update without selecting a record | The system displays a warning.                             | Passed                    |
-| Delete a record                   | The selected record is removed from SQLite.                | Passed                    |
-| Cancel deletion                   | The record remains in the database.                        | Passed                    |
-| Delete without selecting a record | The system displays a warning.                             | Passed                    |
-| Invalid campus location           | The system rejects the invalid location.                   | Passed                    |
-| Database initialization           | The required SQLite table is created if it does not exist. | Passed                    |
-| API error                         | The system displays an error instead of silently failing.  | Passed                    |
+| Test Case                         | Expected Result                                              | Actual Result        |
+| --------------------------------- | ------------------------------------------------------------ | -------------------- |
+| Add a valid record                | The system retrieves PM2.5 data and saves a new record.      | Passed               |
+| View records                      | Saved records are displayed in the table.                    | Passed               |
+| Search by location                | Only records matching the location keyword are displayed.    | Passed               |
+| Filter by category                | Only records matching the selected category are displayed.   | Passed               |
+| Search with empty input           | The system displays a warning message.                       | Passed               |
+| Clear search                      | The search input is cleared.                                 | Passed               |
+| Show All records                  | Both filters are reset, and all saved records are displayed. | Passed               |
+| Update PM2.5                      | A new PM2.5 value is retrieved and the record is updated.    | Passed               |
+| Change location                   | The selected record's location is updated.                   | Passed               |
+| Update without selecting a record | The system displays a warning.                               | Passed               |
+| Delete a record                   | The selected record is removed from SQLite.                  | Passed               |
+| Cancel deletion                   | The record remains in the database.                          | Passed               |
+| Delete without selecting a record | The system displays a warning.                               | Passed               |
+| Invalid campus location           | The system rejects the invalid location.                     | Passed               |
+| Database initialization           | The required SQLite table is created if it does not exist.   | Passed               |
+| API error                         | The system displays an error instead of silently failing.    | Passed               |
 
 ---
 
