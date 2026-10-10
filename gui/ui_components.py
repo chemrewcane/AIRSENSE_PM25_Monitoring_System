@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem,
     QVBoxLayout,
     QWidget,
+    QHeaderView
 )
 
 def create_title():
@@ -52,19 +53,20 @@ def create_search_section():
 
     return layout, search_input, search_button, show_all_button
 
+
 def create_records_table():
     table = QTableWidget()
+
     table.setColumnCount(6)
-    table.setHorizontalHeaderLabels(
-        [
-            "ID",
-            "Location",
-            "PM2.5",
-            "Category",
-            "Advisory",
-            "Logged At",
-        ]
-    )
+    table.setHorizontalHeaderLabels([
+        "ID",
+        "Location",
+        "PM2.5",
+        "Category",
+        "Advisory",
+        "Logged At",
+    ])
+
     table.setEditTriggers(
         QTableWidget.EditTrigger.NoEditTriggers
     )
@@ -74,7 +76,17 @@ def create_records_table():
     table.setSelectionMode(
         QTableWidget.SelectionMode.SingleSelection
     )
-    table.horizontalHeader().setStretchLastSection(True)
+
+    table.setMinimumWidth(0)
+    table.setSizePolicy(
+        table.sizePolicy().Policy.Expanding,
+        table.sizePolicy().Policy.Expanding,
+    )
+
+    table.horizontalHeader().setSectionResizeMode(
+        QHeaderView.ResizeMode.Stretch
+    )
+
     return table
 
 def create_action_section():
