@@ -92,12 +92,21 @@ def create_records_table():
 
     table.setStyleSheet("""
         QTableWidget {
+            background-color: white;
             border: 1px solid #B7D9E8;
             border-radius: 8px;
-            background-color: white;
             gridline-color: #D9E5EB;
             selection-background-color: #DCEEF7;
             selection-color: #222222;
+        }
+
+        QTableWidget::item {
+            padding: 5px;
+        }
+
+        QHeaderView {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
         }
 
         QHeaderView::section {
@@ -111,9 +120,12 @@ def create_records_table():
         QTableCornerButton::section {
             background-color: #2F91B5;
             border: none;
-            border-top-left-radius: 8px;
         }
     """)
+
+    table.setAttribute(
+        Qt.WidgetAttribute.WA_StyledBackground, True
+    )
 
     return table
 
