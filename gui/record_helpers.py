@@ -1,4 +1,5 @@
 from PyQt6.QtGui import QColor
+from PyQt6.QtWidgets import QHeaderView
 
 from gui.ui_components import (
     add_record_to_table,
@@ -25,7 +26,22 @@ def color_record_row(table, row, category):
 
 def display_records(table, records):
     clear_table(table)
+
     for index, record in enumerate(records, start=1):
-        add_record_to_table(table, record)
+        add_record_to_table(
+            table,
+            record,
+            display_id=index,
+        )
+
         row = table.rowCount() - 1
-        color_record_row(table, row, record["category"])
+
+        color_record_row(
+            table,
+            row,
+            record["category"],
+        )
+
+    table.horizontalHeader().setSectionResizeMode(
+        QHeaderView.ResizeMode.Stretch
+    )
