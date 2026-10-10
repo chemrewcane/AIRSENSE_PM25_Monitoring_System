@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS air_quality_records (
 SELECT_COLUMNS = """
 id, location, pm25, category, advisory, timestamp
 """
-
 def connect_database():
     return sqlite3.connect(DATABASE_FILE)
 
@@ -67,6 +66,7 @@ def add_record_to_database(
     advisory,
     timestamp,
 ):
+
     with connect_database() as connection:
         cursor = connection.execute(
             """
@@ -87,10 +87,9 @@ def search_database(keyword):
             SELECT {SELECT_COLUMNS}
             FROM air_quality_records
             WHERE LOWER(location) LIKE ?
-               OR LOWER(category) LIKE ?
             ORDER BY id
             """,
-            (search_value, search_value),
+            (search_value,),
         ).fetchall()
 
     return [_row_to_dict(row) for row in rows]
