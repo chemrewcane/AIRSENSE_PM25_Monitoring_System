@@ -14,9 +14,7 @@ from gui.dialogs import show_error, show_success
 from gui.records_window import RecordsWindow
 from gui.ui_components import create_central_widget
 
-
 class AirSenseWindow(QMainWindow):
-
     def apply_styles(self):
         self.setStyleSheet("""
             QMainWindow {
@@ -148,7 +146,6 @@ class AirSenseWindow(QMainWindow):
         self.records_window.show()
         self.records_window.raise_()
         self.records_window.activateWindow()
-
 
 def main():
     app = QApplication([])
