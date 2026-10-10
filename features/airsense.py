@@ -119,7 +119,6 @@ def update_record(record_id, update_type, new_location=None):
 
     return database.get_record(record_id)
 
-
 def delete_record(record_id):
     target = database.get_record(record_id)
 
