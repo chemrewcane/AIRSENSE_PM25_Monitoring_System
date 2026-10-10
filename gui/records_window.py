@@ -7,7 +7,8 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QMainWindow,
-    QHeaderView
+    QHeaderView,
+    QSizePolicy
 )
 
 from config.config_module import CAMPUS_LOCATIONS
@@ -139,16 +140,18 @@ class RecordsWindow(QMainWindow):
 
         self.location_combo.setMinimumWidth(0)
         self.location_combo.setSizePolicy(
-            self.location_combo.sizePolicy().Policy.Expanding,
-            self.location_combo.sizePolicy().Policy.Fixed,
+            QSizePolicy.Policy.Expanding,
+            QSizePolicy.Policy.Fixed,
         )
+        
         add_layout.addWidget(self.location_combo, 1)
 
         self.add_button = QPushButton("Add Record")
-        self.add_button.setFixedWidth(150)
+        self.add_button.setFixedHeight(32)
+        self.add_button.setFixedWidth(127)
         self.add_button.clicked.connect(self.add_record)
-        add_layout.addWidget(self.add_button)
 
+        add_layout.addWidget(self.add_button)
         main_layout.addLayout(add_layout)
 
         search_layout = QHBoxLayout()
@@ -267,10 +270,9 @@ class RecordsWindow(QMainWindow):
             QHeaderView.ResizeMode.Stretch
         )
         self.table.horizontalHeader().setStretchLastSection(True)
-
+    
     def clear_search(self):
         self.search_input.clear()
-        self.apply_filters()
 
     def search_records(self):
         keyword = self.search_input.text().strip()
