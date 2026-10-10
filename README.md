@@ -24,8 +24,11 @@ The main objectives of AIRSENSE are to:
 ## Features
 
 - Add Air-Quality Record - The user selects a campus location and clicks **Add Record**. The system retrieves the current PM2.5 value from the Open-Meteo API, classifies it, generates a timestamp, and saves the record to SQLite.
-- View Records - The system displays saved air-quality records in a table containing: ID, Location, PM2.5, Category, Advisory, Logged At
-- Search Records - Users can search saved records using a location or PM2.5 category keyword.
+- View Records - The system displays saved air-quality records in a table containing: ID, Location, PM2.5, Category, Advisory, Logged At.
+- Search by Location - Users can search for saved records using a campus location keyword. The search field searches locations only.
+- Filter by Category – Users can select a PM2.5 category from a dropdown to display records that match the selected category. The category filter can be combined with the location search.
+- Clear Search – Clears the location search input without automatically resetting the category filter.
+- Show All Records – Resets the search and category filters and displays all saved records.
 - Update Record - The system provides two update options:
 
   **Refresh PM2.5 reading** — retrieves a new PM2.5 value from the API and updates the category, advisory, and timestamp.
@@ -155,16 +158,18 @@ No manual database creation is required.
 
 ## How to Use the System
 
-1. Open the application by running `main.py`.
-2. Select a campus location from the **Select Location** dropdown.
-3. Click **Add Record** to retrieve the current PM2.5 reading and save it to the database.
-4. Select **View Record** to open the air-quality records window.
-5. Use the **Search** field to find records by location or PM2.5 category.
-6. Select a record and use **Update Record** to refresh its PM2.5 reading or change its location.
-7. Use **Delete Record** to permanently remove a selected record.
-8. Use **Show All** to display all saved air-quality records.
-9. Use **Clear** to clear the search input.
-10. Close the application when finished.
+1. Run `main.py` to launch AIRSENSE.
+2. Select a campus location from the **Select Location** dropdown in the main window.
+3. Click **Add Record** to retrieve the current PM2.5 reading and save it to the SQLite database.
+4. Select **View Record** to open the records window.
+5. Use the **Search Location** field to find records by campus location.
+6. Use the **Filter by Category** dropdown to display records belonging to a specific PM2.5 category.
+7. Click **Search** to apply the location search.
+8. Click **Clear** to clear the search input.
+9. Click **Show All** to reset the search and category filters and display all records.
+10. Select a record and click **Update Record** to refresh its PM2.5 reading or change its location.
+11. Select a record and click **Delete Record** to remove it after confirming the deletion.
+12. Close the application when finished.
 
 ---
 
